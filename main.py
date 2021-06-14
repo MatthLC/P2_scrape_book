@@ -1,8 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import os
 
-
+# Create directory for output:
+try:
+	os.mkdir('./output')
+except FileExistsError:
+	pass
 
 db = {	 "product_page_url":"product_page_url"
 		,"universal_product_code":"UPC"
@@ -71,12 +76,11 @@ def book():
 		
 		
 def output_csv(p_name):
-	with open(p_name + '.csv', 'a', encoding="utf-8") as create_csv:
+	with open('./output/' + p_name + '.csv', 'a', encoding="utf-8") as create_csv:
 		writer = csv.DictWriter(create_csv,db.keys())
 		# A faire : Warning plusieurs headers
 		writer.writeheader()
 		writer.writerow(db)
-
 
 if __name__ == "__main__":
 
@@ -84,5 +88,3 @@ if __name__ == "__main__":
 	init_soup(url)
 	
 	output_csv("livre")
-		
-	print("fonctionne")
