@@ -88,5 +88,3 @@ if __name__ == "__main__":
 	init_soup(url)
 	
 	output_csv("livre")
-		
-	print("fonctionne")
