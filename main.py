@@ -23,8 +23,7 @@ def create_dir(p_name):
 		pass
 
 def init_soup(p_url):
-	url = p_url
-	check_url = requests.get(url)
+	check_url = requests.get(p_url)
 
 	if check_url.ok:
 		soup = BeautifulSoup(check_url.text, 'html.parser')
@@ -84,6 +83,6 @@ if __name__ == '__main__':
 	
 	soup = init_soup(url)
 
-	if soup != None:
+	if soup:
 		book()
 		output_csv('livre')
