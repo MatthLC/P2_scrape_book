@@ -3,6 +3,12 @@ from bs4 import BeautifulSoup
 import csv
 import os
 
+list_book_from_category = {}
+category_name_link = {}
+
+list_category = []
+category_link = []
+
 db = {	 'product_page_url':'product_page_url'
 		,'universal_product_code':'UPC'
 		,'title':'title'
@@ -23,8 +29,7 @@ def create_dir(p_name):
 		pass
 
 def init_soup(p_url):
-	url = p_url
-	check_url = requests.get(url)
+	check_url = requests.get(p_url)
 
 	if check_url.ok:
 		soup = BeautifulSoup(check_url.text, 'html.parser')
@@ -78,12 +83,79 @@ def output_csv(p_name):
 		writer.writerow(db)
 
 if __name__ == '__main__':
+
 	create_dir('output')
 
-	url = 'http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html'
-	
-	soup = init_soup(url)
+	#list category
+	soup = init_soup('https://books.toscrape.com/')
+	if soup:
+		
+		titre_li = soup.find('ul',{'class':'nav nav-list'})
 
-	if soup != None:
-		book()
-		output_csv('livre')
+		for link in titre_li.findAll('a'):
+			list_category.append(link.get_text().replace('\n','').strip())
+		
+		for li in titre_li.findAll('li'):
+			category_link.append('http://books.toscrape.com/' + li.find('a')['href'])
+		
+		for i in range(1,len(list_category)):
+			for j in range(1,len(category_link)):
+				if i == j:
+					category_name_link[list_category[i]] = category_link[i]
+		
+
+	# Extraction des liens pour chaque catégories
+	#	Pour chaque page
+	#		Pour chaque livre
+
+	for cle, category in category_name_link.items():
+
+		list_book_from_category[cle] = []
+	
+		soup = init_soup(category)
+	
+		if soup:
+	
+			page = soup.find('li',{'class':'current'})
+			page_all = []
+			page_all.append(category)
+	
+			if page:
+				page_nb = page.text.strip().split()[-1]
+
+				for i in range(2, int(page_nb) + 1):
+					page_all.append(category.rsplit('/',1)[0] + "/page-" + str(i) + ".html")
+
+		# book's link for all page
+		for page in page_all:
+			soup = init_soup(page)
+
+			if soup:
+				li_all = soup.findAll('li',{'class':'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
+
+				for li in li_all:
+					list_book_from_category[cle].append('http://books.toscrape.com/catalogue/' + li.find('a')['href'][9:])
+	
+	for cle_category, page_book in list_book_from_category.items():
+		for book in page_book:
+			soup = init_soup(book)
+
+			if soup:
+				
+				titre_li = soup.find('ul',{'class':'nav nav-list'})
+
+				for link in titre_li.findAll('a'):
+					list_category.append(link.get_text().replace('\n','').strip())
+				
+				for li in titre_li.findAll('li'):
+					category_link.append('http://books.toscrape.com/' + li.find('a')['href'])
+				
+				for i in range(1,len(list_category)):
+					for j in range(1,len(category_link)):
+						if i == j:
+							category_name_link[list_category[i]] = category_link[i]
+				
+				
+				book()
+				output_csv(cle_category)
+				
