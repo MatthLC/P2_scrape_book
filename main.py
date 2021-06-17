@@ -159,7 +159,6 @@ if __name__ == '__main__':
 
 			list_book_from_category = f_all_book()
 	
-	list_book_from_category = {'Travel':['http://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html']}
 	for cle_category, page_book in list_book_from_category.items():
 		for web_book in page_book:
 			
