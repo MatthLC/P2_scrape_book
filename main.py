@@ -2,12 +2,20 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import os
+import shutil
+import collections
+import copy
+import urllib.request
+import pdb; 
+
+
 
 list_book_from_category = {}
 category_name_link = {}
 
 list_category = []
 category_link = []
+db_for_csv = {}
 
 db = {	 'product_page_url':'product_page_url'
 		,'universal_product_code':'UPC'
@@ -22,10 +30,16 @@ db = {	 'product_page_url':'product_page_url'
 		}
 
 # Create directory for output:
-def create_dir(p_name):
+def create_output_directory(p_name):
 	try:
 		os.mkdir('./' + p_name)
 	except FileExistsError:
+		pass
+
+def delete_csv(p_file):
+	try:
+		shutil.rmtree('./output/' + p_file)
+	except OSError:
 		pass
 
 # Set beautifullsoup for the next research
@@ -56,37 +70,46 @@ def build_list(p_object):
 
 # Function for book : specific data
 def book(p_url):	
+
+	tempory_db = copy.deepcopy(db)
+
 	#URL
-	db['product_page_url'] = p_url
+	tempory_db['product_page_url'] = p_url
 
 	#title
-	db['title']=find_add_to_db('div', 'class', 'col-sm-6 product_main', 'h1').text
+	tempory_db['title']=find_add_to_db('div', 'class', 'col-sm-6 product_main', 'h1').text
 
-	#product description
-	db['product_description'] = find_add_to_db('article', 'class', 'product_page', '').findAll('p')[3].text
+	# Product information
+	tempory_db['product_description'] = find_add_to_db('article', 'class', 'product_page', '').findAll('p')[3].text
 	product_info = dict(zip(build_list('th'),build_list('td')))
 
-	for db_cle, db_name in db.items():
+	for db_cle, db_name in tempory_db.items():
 		for info_cle, info_info in product_info.items():
 			if db_name == info_cle:
-				db[db_cle] = info_info
+				if db_cle in ['price_including_tax','price_excluding_tax']:
+					tempory_db[db_cle] = info_info[2:]
+				else:
+					tempory_db[db_cle] = info_info
 
 	#image url
-	db['image_url'] = 'http://books.toscrape.com/' + find_add_to_db('div', 'class', 'item active', 'img')['src'][6:]
+	tempory_db['image_url'] = 'http://books.toscrape.com/' + find_add_to_db('div', 'class', 'item active', 'img')['src'][6:]
 
 	#category
-	db['category'] = find_add_to_db('ul','class','breadcrumb','').text.split()[2]
+	tempory_db['category'] = find_add_to_db('ul','class','breadcrumb','').text.replace('\n','/').replace('///','/').replace('//','/').split('/')[3]
+
+	return tempory_db
 		
 # Save as CSV
-def output_csv(p_name):
-	with open('./output/' + p_name + '.csv', 'a', encoding='utf-8') as create_csv:
-		writer = csv.DictWriter(create_csv,db.keys())
-		#TODO: Multiple headers
-		writer.writeheader()
-		writer.writerow(db)
+def output_csv(p_name, p_db):
+	with open('./output/' + p_name + '/' + p_name + '.csv', 'a', encoding='utf-8') as create_csv:
+		writer = csv.DictWriter(create_csv, p_db.keys(), delimiter = ';')
+
+		if count_book == 0:
+			writer.writeheader()
+		writer.writerow(p_db)
 
 # List all categories from the website
-def f_list_category():
+def list_all_category(soup):
 		titre_li = soup.find('ul',{'class':'nav nav-list'})
 
 		for link in titre_li.findAll('a'):
@@ -99,12 +122,10 @@ def f_list_category():
 			for j in range(1,len(category_link)):
 				if i == j:
 					category_name_link[list_category[i]] = category_link[i]
-		return category_name_link
 
 # List all page from categories
-def f_all_page():
-		list_book_from_category[cle] = []
-	
+def all_pages(category):
+
 		soup = init_soup(category)
 	
 		if soup:
@@ -118,11 +139,13 @@ def f_all_page():
 
 				for i in range(2, int(page_nb) + 1):
 					page_all.append(category.rsplit('/',1)[0] + '/page-' + str(i) + '.html')
-
 			return page_all
 
 # list all books on all pages
-def f_all_book():
+def all_books(soup, cle, page):
+	if page_number == 1:
+		list_book_from_category[cle] = []
+
 	soup = init_soup(page)
 
 	if soup:
@@ -131,43 +154,84 @@ def f_all_book():
 		for li in li_all:
 			list_book_from_category[cle].append('http://books.toscrape.com/catalogue/' + li.find('a')['href'][9:])
 	
-	return list_book_from_category
-
-
+def save_image(p_url, p_path, p_name):
+	urllib.request.urlretrieve(p_url,'./' + p_path + '/' + p_name + '.jpg')
 
 # ======= Lancement =======
 if __name__ == '__main__':
 
-	create_dir('output')
+	print('Veuillez patienter...')
+
+	create_output_directory('output')
 	
 	#list category
 	soup = init_soup('https://books.toscrape.com/')
 	if soup:
 
-		category_name_link = f_list_category()
+		list_all_category(soup)
 
 	# Extraction des liens pour chaque catégories
 	#	Pour chaque page
 	#		Pour chaque livre
 	
+	#pdb.set_trace()
 	for cle, category in category_name_link.items():
 
-		page_all = f_all_page()
+		page_all = all_pages(category)
 		
+		page_number = 1
 		# book's link for all page
-		for page in page_all:
+		for page in page_all: 
 
-			list_book_from_category = f_all_book()
+			all_books(soup, cle, page)
+			page_number = page_number + 1
 	
-	for cle_category, page_book in list_book_from_category.items():
-		for web_book in page_book:
+	# User choice
+	# Show all categories
+	print('Bienvenue ! Veuillez sélectionner une ou plusieurs catégories :')
+	i = 1
+	dict_for_user = {}
+
+	print('0. Toutes les catégories')
+	for key_name, value_link  in sorted(category_name_link.items()):
+		print(str(i) + '. ' + key_name)
+		dict_for_user[key_name] = i
+		i = i + 1
+	print('999. Quitter le programme\n')
+
+	while True:
+		user_choice = input('Saisissez les catégories : ').split()
+		user_choice_list = {}
+
+		if user_choice == ['0']:
+			user_choice_list = list_book_from_category
+		
+		for choice in user_choice:
+			for key_category, number in dict_for_user.items():
+				if int(choice) == int(number):
+					user_choice_list[key_category] = list_book_from_category[key_category]
+
+					 #print(list_book_from_category['Add a comment'])
 			
-			soup = init_soup(web_book)
+			for cle_category, page_book in user_choice_list.items():
+				#print('user_choice_list : ', user_choice_list)
+				count_book = 0
 
-			if soup:
-								
-				book(web_book)
-				
-				output_csv(cle_category)
-	
-				
+				delete_csv(cle_category)
+				create_output_directory('output/' + cle_category)
+
+				for web_book in page_book:
+					soup = init_soup(web_book)
+
+					if soup:
+										
+						db_for_csv = book(web_book)
+
+						save_image(db_for_csv['image_url'], 'output/' + cle_category, db_for_csv['title'].replace('/',' ').replace(':', ' ').replace('?',' ') )
+						
+						output_csv(cle_category, db_for_csv)
+
+					count_book = count_book + 1
+			
+		if user_choice == ['999']:
+			break
