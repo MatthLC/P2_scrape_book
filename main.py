@@ -7,7 +7,7 @@ import collections
 import copy
 import urllib.request
 import pdb; 
-
+#pdb.set_trace()
 
 
 list_book_from_category = {}
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 	#	Pour chaque page
 	#		Pour chaque livre
 	
-	#pdb.set_trace()
+
 	for cle, category in category_name_link.items():
 
 		page_all = all_pages(category)
@@ -210,11 +210,8 @@ if __name__ == '__main__':
 			for key_category, number in dict_for_user.items():
 				if int(choice) == int(number):
 					user_choice_list[key_category] = list_book_from_category[key_category]
-
-					 #print(list_book_from_category['Add a comment'])
 			
 			for cle_category, page_book in user_choice_list.items():
-				#print('user_choice_list : ', user_choice_list)
 				count_book = 0
 
 				delete_csv(cle_category)
