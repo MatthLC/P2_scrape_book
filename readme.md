@@ -12,8 +12,8 @@ Ce projet est développé avec la version de Python 3.9, il est par conséquent 
 ## **Initialisation de l'environnement**
 
 ### 1. Cloner la branche Main vers un répertoire local
-    - Créer un dossier pour y disposer les fichiers présents sous GitHub
-    - Ouvrir un terminal et se positionner dans le dossier en question avec la commande cd, par exemple:
+    - Créer un dossier sur votre ordianteur pour y disposer les fichiers présents sous GitHub
+    - Ouvrir un terminal (Ex: Windows PowerShell) et se positionner dans le dossier en question avec la commande cd, par exemple:
 ```
 cd d:
 cd -- "D:\mon_dossier"
@@ -41,7 +41,7 @@ cd -- "D:\mon_dossier"
 `pip install -r requirements.txt`
 
 
-## **Installation du projet**
+## **Lancement du projet**
 
 ### 1. Lancer le programme Main.py sous l'environnement virtuel, dans le terminal:
 
