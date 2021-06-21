@@ -70,7 +70,7 @@ les données sont stockées au format CSV sous la struture suivante :
 
 ```
  product_page_url
- universal_ product_code (upc)
+ universal_ product_code
  title
  price_including_tax
  price_excluding_tax
