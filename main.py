@@ -157,6 +157,9 @@ def all_books(soup, cle, page):
 def save_image(p_url, p_path, p_name):
 	urllib.request.urlretrieve(p_url,'./' + p_path + '/' + p_name + '.jpg')
 
+def replace_characters_in_db():
+	db_for_csv['title']=db_for_csv['title'].replace('/',' ').replace(':', ' ').replace('?',' ').replace("\\",' ').replace('"',' ').replace('*',' ').replace('|',' ').replace('?', ' ').replace('<', ' ').replace('>',' ')
+
 # ======= Lancement =======
 if __name__ == '__main__':
 
@@ -224,7 +227,9 @@ if __name__ == '__main__':
 										
 						db_for_csv = book(web_book)
 
-						save_image(db_for_csv['image_url'], 'output/' + cle_category, db_for_csv['title'].replace('/',' ').replace(':', ' ').replace('?',' ') )
+						replace_characters_in_db()
+
+						save_image(db_for_csv['image_url'], 'output/' + cle_category, db_for_csv['title'])
 						
 						output_csv(cle_category, db_for_csv)
 
