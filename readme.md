@@ -22,48 +22,46 @@ cd -- "D:\mon_dossier"
 
 - créer l'environnement:
 
-```
-python -m venv venv
-```
+
+`python -m venv venv`
 
 - Activer l'nvironnement (L'environnement est activé une fois son nom affiché dans le terminal) : 
 
     - Windows:
-```
-    venv/Scripts/Activate.ps1 
-```
+
+    `venv/Scripts/Activate.ps1` 
+
     - Inux et MacOS:  
-```
-    source venv/bin/activate
-```
+
+    `source venv/bin/activate`
+
     - installer les librairies : 
-```
-    pip install -r requirements.txt
-```
+
+    `pip install -r requirements.txt`
+
 
 - **Installation du projet**
 
 1. Lancer le programme Main.py sous l'environnement virtuel, dans le terminal:
-```
-py main.py
-```
+
+`py main.py`
+
 2. Patienter jusqu'à l'affichage de toutes les catégories
 3. Saisir le/les numéros des catégories concernées séparés par un espace :
 4. Patienter jusqu'à la fin du traitement (Ne pas ouvrir les fichiers CSV pendant le scraping)
 
 
 Extraction de toutes les catégories :
-```
-0
-```
+
+`0`
+
 Quitter l'application:
-```
-999
-```
+
+`999`
+
 Exemple :
-```
-2 10 23
-```
+
+`2 10 23`
 
 - **Enregistrement des fichiers :**
 
