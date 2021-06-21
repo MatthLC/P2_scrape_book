@@ -41,5 +41,6 @@ les données sont stockées au format CSV sous la struture suivante :
 ```
 
 Les résultats seront disponibles dans le dossier "output" créé par l'application.
+
 Un Dossier est créé par catégorie, chaque dossier contient le fichier CSV correspondant et les images des couvertures de livre.
 
