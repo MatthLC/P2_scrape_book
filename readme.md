@@ -15,21 +15,24 @@ Ce projet est développé avec la version de Python 3.9, il est par conséquent 
     - Ouvrir un terminal et se positionner dans le dossier en question avec la commande cd, par exemple:
 ```
 cd d:
-cd d: -- "D:\mon_dossier"
+cd -- "D:\mon_dossier"
 ```
 
 2. Créer un environnement virtuel et installer les librairies à l'aide du fichier requirements.txt
 
-    - créer l'environnement:
+- créer l'environnement:
+
 ```
-     python -m venv venv
+python -m venv venv
 ```
-    - Activer l'nvironnement (L'environnement est activé une fois son nom affiché dans le terminal) : 
-      - Windows:
+
+- Activer l'nvironnement (L'environnement est activé une fois son nom affiché dans le terminal) : 
+
+    - Windows:
 ```
     venv/Scripts/Activate.ps1 
 ```
-      - Inux et MacOS:  
+    - Inux et MacOS:  
 ```
     source venv/bin/activate
 ```
