@@ -49,8 +49,10 @@ cd -- "D:\mon_dossier"
 
 ### 2. Patienter jusqu'à l'affichage de toutes les catégories
 ### 3. Saisir le/les numéros des catégories concernées séparés par un espace :
-### 4. Patienter jusqu'à la fin du traitement (Ne pas ouvrir les fichiers CSV pendant le scraping)
 
+Exemple pour extraire 3 catégories:
+
+`2 10 23`
 
 Extraction de toutes les catégories :
 
@@ -60,9 +62,7 @@ Quitter l'application:
 
 `999`
 
-Exemple :
-
-`2 10 23`
+### 4. Patienter jusqu'à la fin du traitement (Ne pas ouvrir les fichiers CSV pendant le scraping)
 
 ## **Enregistrement des fichiers :**
 
