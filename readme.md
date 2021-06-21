@@ -85,5 +85,5 @@ Les résultats seront disponibles dans le dossier "output" créé par l'applicat
 
 Il existe un dossier par catégorie, ce dossier contient le fichier CSV correspondant ainsi que les images des couvertures de livre.
 
-Bon à savoir : le précédent dossier de la catégorie lancée sera supprimé, veillez à copier dans un autre dossier les résultats que vous voulez concerver.
+Bon à savoir : le précédent dossier de la catégorie lancée sera supprimé, veillez à copier dans un autre dossier les résultats que vous voulez concerver.(Si je lance deux fois la catégorie "Fiction", le dossier créé au premier lancement sera supprimé et recréé pour le nouveau lancement)
 
