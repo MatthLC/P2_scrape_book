@@ -7,13 +7,14 @@ Ce projet stock les principales informations des livres au format CSV ainsi que 
 - **Initialisation de l'environnement**
 
 1. Cloner la branche Main vers un répertoire local
-2. Creer un environnement virtuel et installer les librairies à l'aide du fichier requirements.txt
+2. Créer un environnement virtuel et installer les librairies à l'aide du fichier requirements.txt
 
 - **Installation du projet**
 
-1. Lancer le programme Main sous votre environnement virtuel
-2. Patienter j'usquà l'affichage de toutes les catégories
+1. Lancer le programme Main.py sous l'environnement virtuel
+2. Patienter jusqu'à l'affichage de toutes les catégories
 3. Saisir le/les numéros des catégories concernées séparés par un espace :
+4. Patienter jusqu'à la fin du traitement (Ne pas ouvrir les fichiers CSV pendant le scraping)
 
 ```
  0 : Extraction de toutes les catégories
