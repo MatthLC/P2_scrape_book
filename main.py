@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import csv
 import os
 import shutil
-import collections
 import copy
 import urllib.request
 import pdb; 
@@ -77,7 +76,7 @@ def book(p_url):
 	tempory_db['product_page_url'] = p_url
 
 	#title
-	tempory_db['title']=find_add_to_db('div', 'class', 'col-sm-6 product_main', 'h1').text
+	tempory_db['title'] = find_add_to_db('div', 'class', 'col-sm-6 product_main', 'h1').text
 
 	# Product information
 	tempory_db['product_description'] = find_add_to_db('article', 'class', 'product_page', '').findAll('p')[3].text
@@ -158,7 +157,7 @@ def save_image(p_url, p_path, p_name):
 	urllib.request.urlretrieve(p_url,'./' + p_path + '/' + p_name + '.jpg')
 
 def replace_characters_in_db():
-	db_for_csv['title']=db_for_csv['title'].replace('/',' ').replace(':', ' ').replace('?',' ').replace("\\",' ').replace('"',' ').replace('*',' ').replace('|',' ').replace('?', ' ').replace('<', ' ').replace('>',' ')
+	db_for_csv['title'] = db_for_csv['title'].replace('/',' ').replace(':', ' ').replace('?',' ').replace("\\",' ').replace('"',' ').replace('*',' ').replace('|',' ').replace('?', ' ').replace('<', ' ').replace('>',' ')
 
 # ======= Lancement =======
 if __name__ == '__main__':

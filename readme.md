@@ -12,8 +12,11 @@ Ce projet est développé avec la version de Python 3.9, il est par conséquent 
 ## **Initialisation de l'environnement**
 
 ### 1. Cloner la branche Main vers un répertoire local
-    - Créer un dossier sur votre ordianteur pour y disposer les fichiers présents sous GitHub
-    - Ouvrir un terminal (Ex: Windows PowerShell) et se positionner dans le dossier en question avec la commande cd, par exemple:
+
+- Créer un dossier sur votre ordianteur pour y disposer les fichiers présents sous GitHub
+
+- Ouvrir un terminal (Ex: Windows PowerShell) et se positionner dans le dossier en question avec la commande cd, par exemple:
+
 ```
 cd d:
 cd -- "D:\mon_dossier"
@@ -62,7 +65,7 @@ Quitter l'application:
 
 `999`
 
-### 4. Patienter jusqu'à la fin du traitement (Ne pas ouvrir les fichiers CSV pendant le scraping)
+### 4. Patienter jusqu'à la fin du traitement (:warning: Ne pas ouvrir les fichiers CSV pendant le scraping :warning:)
 
 ## **Enregistrement des fichiers :**
 
@@ -81,7 +84,7 @@ les données sont stockées au format CSV sous la struture suivante :
  image_url
 ```
 
-Les résultats seront disponibles dans le dossier "output" créé par l'application dans le dossier du projet.
+Les résultats seront disponibles dans le dossier "output" créé par l'application à la racine du projet.
 
 Il existe un dossier par catégorie, ce dossier contient le fichier CSV correspondant ainsi que les images des couvertures de livre.
 
