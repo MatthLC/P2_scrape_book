@@ -4,10 +4,8 @@ import csv
 import os
 import shutil
 import copy
-import urllib.request
+import sys
 import pdb; 
-#pdb.set_trace()
-
 
 list_book_from_category = {}
 category_name_link = {}
@@ -15,6 +13,8 @@ category_name_link = {}
 list_category = []
 category_link = []
 db_for_csv = {}
+
+main_url = 'http://books.toscrape.com/'
 
 db = {	 'product_page_url':'product_page_url'
 		,'universal_product_code':'UPC'
@@ -34,12 +34,21 @@ def create_output_directory(p_name):
 		os.mkdir('./' + p_name)
 	except FileExistsError:
 		pass
+	except Exception:
+		sys.exit("Un problème est survenue, veuillez contacter l'administrateur")
 
 def delete_csv(p_file):
 	try:
 		shutil.rmtree('./output/' + p_file)
 	except OSError:
 		pass
+
+def replace_special_characters(p_string, p_type):
+	if p_type == '/':
+		result = p_string.replace('\n','/').replace('///','/').replace('//','/')
+	if p_type == 'img':
+		result = p_string.replace('/',' ').replace(':', ' ').replace('?',' ').replace("\\",' ').replace('"',' ').replace('*',' ').replace('|',' ').replace('?', ' ').replace('<', ' ').replace('>',' ')
+	return result
 
 # Set beautifullsoup for the next research
 def init_soup(p_url):
@@ -91,16 +100,17 @@ def book(p_url):
 					tempory_db[db_cle] = info_info
 
 	#image url
-	tempory_db['image_url'] = 'http://books.toscrape.com/' + find_add_to_db('div', 'class', 'item active', 'img')['src'][6:]
+	tempory_db['image_url'] = main_url + find_add_to_db('div', 'class', 'item active', 'img')['src'][6:]
 
 	#category
-	tempory_db['category'] = find_add_to_db('ul','class','breadcrumb','').text.replace('\n','/').replace('///','/').replace('//','/').split('/')[3]
+	tempory_db['category'] = replace_special_characters(find_add_to_db('ul','class','breadcrumb','').text, '/').split('/')[3]
 
 	return tempory_db
 		
 # Save as CSV
 def output_csv(p_name, p_db):
-	with open('./output/' + p_name + '/' + p_name + '.csv', 'a', encoding='utf-8') as create_csv:
+	csv_filename = './output/' + p_name + '/' + p_name + '.csv'
+	with open(csv_filename, 'a', encoding='utf-8') as create_csv:
 		writer = csv.DictWriter(create_csv, p_db.keys(), delimiter = ';')
 
 		if count_book == 0:
@@ -115,7 +125,7 @@ def list_all_category(soup):
 			list_category.append(link.get_text().replace('\n','').strip())
 		
 		for li in titre_li.findAll('li'):
-			category_link.append('http://books.toscrape.com/' + li.find('a')['href'])
+			category_link.append(main_url + li.find('a')['href'])
 		
 		for i in range(1,len(list_category)):
 			for j in range(1,len(category_link)):
@@ -141,7 +151,7 @@ def all_pages(category):
 			return page_all
 
 # list all books on all pages
-def all_books(soup, cle, page):
+def all_books(cle, page):
 	if page_number == 1:
 		list_book_from_category[cle] = []
 
@@ -151,13 +161,20 @@ def all_books(soup, cle, page):
 		li_all = soup.findAll('li',{'class':'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
 
 		for li in li_all:
-			list_book_from_category[cle].append('http://books.toscrape.com/catalogue/' + li.find('a')['href'][9:])
+			list_book_from_category[cle].append(main_url + 'catalogue/' + li.find('a')['href'][9:])
 	
 def save_image(p_url, p_path, p_name):
-	urllib.request.urlretrieve(p_url,'./' + p_path + '/' + p_name + '.jpg')
+	response = requests.get(p_url, stream = True)
+	if response.ok:
+
+		img_filename = './' + p_path + '/' + p_name + '.jpg'
+		with open(img_filename, 'wb') as out_file:
+			shutil.copyfileobj(response.raw, out_file)
+
+		del response
 
 def replace_characters_in_db():
-	db_for_csv['title'] = db_for_csv['title'].replace('/',' ').replace(':', ' ').replace('?',' ').replace("\\",' ').replace('"',' ').replace('*',' ').replace('|',' ').replace('?', ' ').replace('<', ' ').replace('>',' ')
+	db_for_csv['title'] = replace_special_characters(db_for_csv['title'],'img')
 
 # ======= Lancement =======
 if __name__ == '__main__':
@@ -167,15 +184,10 @@ if __name__ == '__main__':
 	create_output_directory('output')
 	
 	#list category
-	soup = init_soup('https://books.toscrape.com/')
+	soup = init_soup(main_url)
 	if soup:
 
 		list_all_category(soup)
-
-	# Extraction des liens pour chaque catégories
-	#	Pour chaque page
-	#		Pour chaque livre
-	
 
 	for cle, category in category_name_link.items():
 
@@ -185,7 +197,7 @@ if __name__ == '__main__':
 		# book's link for all page
 		for page in page_all: 
 
-			all_books(soup, cle, page)
+			all_books(cle, page)
 			page_number = page_number + 1
 	
 	# User choice

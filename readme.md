@@ -46,11 +46,11 @@ cd -- "D:\mon_dossier"
 
 ## **Lancement du projet**
 
-### 1. Lancer le programme Main.py sous l'environnement virtuel, dans le terminal:
+### 1. Lancer le programme main.py sous l'environnement virtuel, dans le terminal:
 
 `py main.py`
 
-### 2. Patienter jusqu'à l'affichage de toutes les catégories
+### 2. Patienter jusqu'à l'affichage de toutes les catégories (Entre 30 secondes et 1 minute)
 ### 3. Saisir le/les numéros des catégories concernées séparés par un espace :
 
 Exemple pour extraire 3 catégories:
