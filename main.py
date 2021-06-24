@@ -9,7 +9,6 @@ import pdb;
 
 list_book_from_category = {}
 category_name_link = {}
-
 list_category = []
 category_link = []
 db_for_csv = {}
@@ -28,7 +27,6 @@ db = {	 'product_page_url':'product_page_url'
 		,'image_url':'image_url'
 		}
 
-# Create directory for output:
 def create_output_directory(p_name):
 	try:
 		os.mkdir('./' + p_name)
@@ -69,28 +67,23 @@ def find_add_to_db(p_arg1, p_arg2, p_arg3, p_add_find):
 # Function for book : product information data
 def build_list(p_object):
 	product_info_trs = soup.findAll('tr')
-	
 	f_list = []
+
 	for obj in product_info_trs:
 		f_list.append(obj.find(p_object).text)
-
 	return f_list
 
 # Function for book : specific data
 def book(p_url):	
-
 	tempory_db = copy.deepcopy(db)
 
-	#URL
 	tempory_db['product_page_url'] = p_url
-
-	#title
 	tempory_db['title'] = find_add_to_db('div', 'class', 'col-sm-6 product_main', 'h1').text
-
-	# Product information
 	tempory_db['product_description'] = find_add_to_db('article', 'class', 'product_page', '').findAll('p')[3].text
-	product_info = dict(zip(build_list('th'),build_list('td')))
+	tempory_db['image_url'] = main_url + find_add_to_db('div', 'class', 'item active', 'img')['src'][6:]
+	tempory_db['category'] = replace_special_characters(find_add_to_db('ul','class','breadcrumb','').text, '/').split('/')[3]
 
+	product_info = dict(zip(build_list('th'),build_list('td')))
 	for db_cle, db_name in tempory_db.items():
 		for info_cle, info_info in product_info.items():
 			if db_name == info_cle:
@@ -98,13 +91,6 @@ def book(p_url):
 					tempory_db[db_cle] = info_info[2:]
 				else:
 					tempory_db[db_cle] = info_info
-
-	#image url
-	tempory_db['image_url'] = main_url + find_add_to_db('div', 'class', 'item active', 'img')['src'][6:]
-
-	#category
-	tempory_db['category'] = replace_special_characters(find_add_to_db('ul','class','breadcrumb','').text, '/').split('/')[3]
-
 	return tempory_db
 		
 # Save as CSV
@@ -119,26 +105,24 @@ def output_csv(p_name, p_db):
 
 # List all categories from the website
 def list_all_category(soup):
-		titre_li = soup.find('ul',{'class':'nav nav-list'})
+	titre_li = soup.find('ul',{'class':'nav nav-list'})
 
-		for link in titre_li.findAll('a'):
-			list_category.append(link.get_text().replace('\n','').strip())
-		
-		for li in titre_li.findAll('li'):
-			category_link.append(main_url + li.find('a')['href'])
-		
-		for i in range(1,len(list_category)):
-			for j in range(1,len(category_link)):
-				if i == j:
-					category_name_link[list_category[i]] = category_link[i]
+	for link in titre_li.findAll('a'):
+		list_category.append(link.get_text().replace('\n','').strip())
+	
+	for li in titre_li.findAll('li'):
+		category_link.append(main_url + li.find('a')['href'])
+	
+	for i in range(1,len(list_category)):
+		for j in range(1,len(category_link)):
+			if i == j:
+				category_name_link[list_category[i]] = category_link[i]
 
 # List all page from categories
 def all_pages(category):
-
 		soup = init_soup(category)
 	
 		if soup:
-	
 			page = soup.find('li',{'class':'current'})
 			page_all = []
 			page_all.append(category)
@@ -156,7 +140,6 @@ def all_books(cle, page):
 		list_book_from_category[cle] = []
 
 	soup = init_soup(page)
-
 	if soup:
 		li_all = soup.findAll('li',{'class':'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
 
@@ -166,11 +149,9 @@ def all_books(cle, page):
 def save_image(p_url, p_path, p_name):
 	response = requests.get(p_url, stream = True)
 	if response.ok:
-
 		img_filename = './' + p_path + '/' + p_name + '.jpg'
 		with open(img_filename, 'wb') as out_file:
 			shutil.copyfileobj(response.raw, out_file)
-
 		del response
 
 def replace_characters_in_db():
@@ -178,25 +159,20 @@ def replace_characters_in_db():
 
 # ======= Lancement =======
 if __name__ == '__main__':
-
 	print('Veuillez patienter...')
-
 	create_output_directory('output')
 	
 	#list category
 	soup = init_soup(main_url)
 	if soup:
-
 		list_all_category(soup)
 
 	for cle, category in category_name_link.items():
-
 		page_all = all_pages(category)
-		
 		page_number = 1
+
 		# book's link for all page
 		for page in page_all: 
-
 			all_books(cle, page)
 			page_number = page_number + 1
 	
@@ -227,23 +203,17 @@ if __name__ == '__main__':
 			
 			for cle_category, page_book in user_choice_list.items():
 				count_book = 0
-
 				delete_csv(cle_category)
 				create_output_directory('output/' + cle_category)
 
 				for web_book in page_book:
 					soup = init_soup(web_book)
 
-					if soup:
-										
+					if soup:			
 						db_for_csv = book(web_book)
-
 						replace_characters_in_db()
-
 						save_image(db_for_csv['image_url'], 'output/' + cle_category, db_for_csv['title'])
-						
 						output_csv(cle_category, db_for_csv)
-
 					count_book = count_book + 1
 			
 		if user_choice == ['999']:
